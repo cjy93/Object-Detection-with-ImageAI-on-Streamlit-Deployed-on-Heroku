@@ -2,19 +2,115 @@
 This application is a streamlit web application which live stream from the host webcam and perform a live object detection.
 <br/>
 
-## Instructions
-1) Install requirements  
-    ```
-    conda env update --name <ENV> --file conda.yml
-    ```
-2) Run the following command to start the app  
-    ```
-    streamlit run src/app.py
-    ```
+## WebLink
+Heroku App Link: https://still-harbor-44570.herokuapp.com/
 <br/>
 
-*Note: Model files should first be placed in the `modelling/models/` folder. Else, start the app and use the download button provided to automatically download the app.  
+To use the app: Go to the weblink, start the app and use the "Download now" button provided to automatically download the model weights on the fly.
 <br/>
+
+## How I deployed Streamlit App on Heroku
+### Install Heroku Client
+First install Heroku client on your laptop from: https://devcenter.heroku.com/articles/heroku-cli  
+This helps you to be able to call Heroku commands from your command line.
+
+
+### Create Requirement.txt
+Go to your console and go to your path directory of choice. Key in this command to export a `requirement.txt` file that contains all the packages in Python that was needed
+```
+pip install pipreqs
+```
+
+`requirement.txt` should look like
+```
+omegaconf==1.4.1
+tensorflow-cpu==1.15.0rc1
+keras==2.1.3
+av==8.0.0
+matplotlib==2.0.0
+pillow==6.2.0
+opencv_python==3.1.0.4
+imageai==2.0.2
+streamlit==0.63.0
+streamlit_webrtc==0.5.0
+```
+### Create setup.sh
+Make `setup.sh` in your folder and it should look like
+```
+mkdir -p ~/.streamlit/
+
+echo "[server]
+headless = true
+port = $PORT
+enableCORS = false
+" > ~/.streamlit/config.toml
+```
+
+### Create Procfile
+You can use a bash to 
+`touch Procfile` or `nano Procfile`.  
+Go into the file using an editor, and input
+```
+web: sh setup.sh && streamlit run src/app.py
+```
+
+## Seting up Heroku and Deploying
+Create a Heroku account. Go to your command line, go to that folder path you want to deploy
+```
+heroku login
+```
+This will open up a browser window, enter your login details and you’ll see a login confirmation message in your CLI.
+
+You can now start to deploy through creating a Heroku app using the command heroku create. This will create a Heroku instance for you with a random name assigned. In my case, its `still-harbor-44570`.
+
+### Create remote connection to connect to git locally
+```
+cd still-harbor-44570
+git config user.email "<your_email>"
+git config user.name "<your_username>"
+git branch
+```
+`git branch` was meant to check which branch you are in. We should be in `master` branch only since we did not create any new branches
+
+
+### For Streamlit webstr
+if you have mismatch in commits between local and remote branch
+```
+heroku git:clone -a still-harbor-44570
+```
+For Streamlit streamer, you need a file named `Aptfile` which helps install some dependencies in the Ubuntu-- system in Heroku
+```
+heroku buildpacks:add --index 1 heroku-community/apt
+```
+If there are no remote connection between the local branch to the remote branch, use:
+Link: https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line
+```
+heroku git:remote -a still-harbor-44570
+```
+###Now to deploy
+```
+git add .
+git commit -m "Enter your message here"
+git push heroku master
+```
+If your compiled app is less than 500Mb , then it can be successfully deployed(assuming no bugs or dependency issues). I have played with multiple package versions to finally allow a usable copy, yet is less than 500MB after deployment.
+
+Success message will look like:
+```
+remote: -----> Compressing...
+remote:        Done: 485.7M
+remote: -----> Launching...
+remote:  !     Warning: Your slug size (485 MB) exceeds our soft limit (300 MB) which may affect boot time.
+remote:        Released v27
+remote:        https://still-harbor-44570.herokuapp.com/ deployed to Heroku
+remote:
+remote: Verifying deploy... done.
+To https://git.heroku.com/still-harbor-44570.git
+   76099a9..b181099  master -> master
+
+```
+
+
 
 ## Overall Architecture / Design
 ![arch](webapp_object_detection.png)
@@ -47,17 +143,12 @@ The model layer consists of the Model class which initialize an object detection
 The default object detection model used is the `YOLOv3` and `RetinaNet` object detection model from the [ImageAI](https://github.com/OlafenwaMoses/ImageAI) package.
 <br/>
 <br/>
-## Team Members
-|Member|Scope|
-|:-----|:----|
-|Tan Zhi Chong|Frontend|
-|Chan Jia Yi|Frontend|
-|Ewe ZiYi|Feature|
-|Raymond Ng|Feature|
-|Abraham Wu|Model|
-<br/>
+
 
 ## Acknowledgement
 **streamlit**: https://www.streamlit.io/  
 **streamlit-webrtc**: https://github.com/whitphx/streamlit-webrtc  
+**streamlit-webrtc**: https://github.com/tconkling/streamlit_heroku_example
 **ImageAI**: https://github.com/OlafenwaMoses/ImageAI  
+**HerokuDeployment**: https://medium.com/analytics-vidhya/how-to-deploy-a-streamlit-app-with-heroku-5f76a809ec2e
+**HerokuDeployment**: https://towardsdatascience.com/deploy-streamlit-on-heroku-9c87798d2088
