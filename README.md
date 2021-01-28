@@ -78,7 +78,11 @@ if you have mismatch in commits between local and remote branch
 ```
 heroku git:clone -a still-harbor-44570
 ```
-For Streamlit streamer, you need a file named `Aptfile` which helps install some dependencies in the Ubuntu-- system in Heroku
+For Streamlit streamer, you need a file named `Aptfile` that looks like:
+```
+libgl1
+```
+which helps install some dependencies in the Ubuntu-- system in Heroku
 ```
 heroku buildpacks:add --index 1 heroku-community/apt
 ```
