@@ -1,4 +1,4 @@
-# Team 3 Week 8 Introduction: Webcam object detection
+#  Webcam object detection
 This application is a streamlit web application which live stream from the host webcam and perform a live object detection.
 <br/>
 
